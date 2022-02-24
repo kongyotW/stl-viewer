@@ -38,6 +38,13 @@ export default {
       return this.$store.state.stlDemoModel
     },
   },
+  watch: {
+    color_select (val) {
+      console.log('color_select : ' + this.color_code[val])
+      
+      this.$store.commit('SET_STL_DEMO_MODEL_PROPERTY', {mesh_color : this.color_code[val]})
+    }
+  },
   methods: {    
   },
   mounted() {

@@ -20,7 +20,8 @@ export default new Vuex.Store({
       size : '',
       loading : true,
       load_complete: false,
-      progress_load_value : 0
+      progress_load_value : 0,
+      color_code:'0xfeece1'
     }
   },
   mutations: {
@@ -34,7 +35,10 @@ export default new Vuex.Store({
     SET_STL_DEMO_MODEL_LOAD_PROGRESS(state,payload){      
       state.stlDemoModel.progress_load_value = payload.progress_load_value
       console.log('progress_load_value : ' +  state.stlDemoModel.progress_load_value)
-    },        
+    },       
+    SET_STL_DEMO_MODEL_PROPERTY(state,payload){
+      state.stlDemoModel.color_code = payload.color_code
+    }
   },
   getters: {    
     getStlFile(state){
