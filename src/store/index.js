@@ -14,14 +14,17 @@ export default new Vuex.Store({
     stlDemoModel: {
       name : 'Dragon',
       url: 'static/models/stl/Dragon.STL',
-      mesh : null,
-      visible : true,
+      mesh : null,      
       auto_rotate : true,
       size : '',
       loading : true,
       load_complete: false,
       progress_load_value : 0,
-      color_code:'0xfeece1'
+      mesh_property : {
+        color_code:'0xfeece1',
+        visible : true
+      },
+      
     }
   },
   mutations: {
@@ -36,8 +39,9 @@ export default new Vuex.Store({
       state.stlDemoModel.progress_load_value = payload.progress_load_value
       console.log('progress_load_value : ' +  state.stlDemoModel.progress_load_value)
     },       
-    SET_STL_DEMO_MODEL_PROPERTY(state,payload){
-      state.stlDemoModel.color_code = payload.color_code
+    SET_STL_DEMO_MODEL_PROPERTY(state,payload){            
+      state.stlDemoModel.mesh_property = payload.mesh_property
+      console.log('[mutations SET_STL_DEMO_MODEL_PROPERTY] state.stlDemoModel.mesh_property');
     }
   },
   getters: {    

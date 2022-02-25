@@ -16,7 +16,8 @@ export default {
         size : window.innerWidth/4
       },        
       chk_auto_rotate : true,
-      mesh_demo : null,               
+      mesh_demo : null,  
+      // mesh_demo_color:'0xfeece1',             
       pivot: null,                          
       CANVAS_WIDTH: 0,
       CANVAS_HEIGHT: 0,
@@ -26,7 +27,7 @@ export default {
       directionalLight :''                     
     }
   },
-  methods: {
+  methods: {      
       addStlFile: function(fileList){        
         var reader = new FileReader()
         var _this = this
@@ -146,6 +147,10 @@ export default {
       this.directionalLight.position.copy( this.camera.position ) //JUST what light follow camera
       // this.camera.lookAt(this.cameraTarget)
       this.renderer.render(this.scene, this.camera)
+    },
+    setupMeshProperty (mesh_property){        
+      this.mesh_demo.material.visible = mesh_property.visible
+      this.mesh_demo.material.color.setHex(mesh_property.color_code)            
     }
   },
   computed: {
@@ -153,16 +158,24 @@ export default {
       console.log('compute me...[stlfile]')
       return this.$store.state.stlfile
     },
-    stlDemoModel : function () {      
+    stlDemoModel () {
       return this.$store.state.stlDemoModel
-    },    
+    },     
+    mesh_demo_property (){
+      console.log('[computed] mesh_demo_mesh_property')
+      return this.$store.state.stlDemoModel.mesh_property
+    }
   },
   watch: {
     stlfile(val){      
       if(val){
         this.addStlFile(val)
       }      
-    }
+    },
+    mesh_demo_property(newVal,oldVal){
+      console.log('[watch] mesh_demo_mesh_property : ' + oldVal + ',' + newVal)
+      this.setupMeshProperty(newVal)
+    },
   },
   mounted() {  
     this.loadingModel()    

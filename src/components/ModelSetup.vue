@@ -6,23 +6,26 @@
         <div v-if="this.stlDemoModel.loading"><b>loading... {{this.stlDemoModel.progress_load_value}}%</b> </div>        
         <section v-if="this.stlDemoModel.load_complete">                    
           <p><b>Size (mm) :</b> </p>      
-          <v-checkbox :label="`Show`" v-model="chk_visible"></v-checkbox>      
-          <v-combobox v-model="color_select" :items="items_color" label="Color"></v-combobox>                     
+          <v-checkbox :label="`Show`" v-model="demo_model_property.visible"></v-checkbox>      
+          <v-combobox v-model="demo_model_property.color_select" :items="items_color" label="Color"></v-combobox>                     
         </section>
       </v-card-text>
     </v-card> 
+    
   </section>      
 </template>
 <script>
 export default {    
   data () {
-    return {        
+    return {   
+      demo_model_property : {
+        color_select : 'Gray',
+        visible : true
+      },     
       chk_visible : 'true',    
       property : '',       
       color_select: 'Gray',
-      items_color: [
-        'Gray','Green','Blue','Red'
-      ],
+      items_color: ['Gray','Green','Blue','Red'],
       color_code : {
         'Gray' : '0xfeece1',
         'Green' : '0x00ff00',
@@ -39,11 +42,25 @@ export default {
     },
   },
   watch: {
-    color_select (val) {
-      console.log('color_select : ' + this.color_code[val])
+    color_select (val) {      
+      var mesh_property = { 
+        color_code : this.color_code[val],
+        visible: this.chk_visible}
+      this.$store.commit('SET_STL_DEMO_MODEL_PROPERTY', {mesh_property : mesh_property})
+    },
+    demo_model_property : {
       
-      this.$store.commit('SET_STL_DEMO_MODEL_PROPERTY', {mesh_color : this.color_code[val]})
-    }
+      handler: function () {
+        console.log('demo_model_property')
+        var color_code = this.color_code[this.demo_model_property.color_select]
+        var mesh_property = { 
+          color_code : color_code,
+          visible: this.demo_model_property.visible
+        }
+        this.$store.commit('SET_STL_DEMO_MODEL_PROPERTY', {mesh_property : mesh_property})        
+       },
+      deep: true
+    },
   },
   methods: {    
   },
