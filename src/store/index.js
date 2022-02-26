@@ -1,58 +1,89 @@
 import Vue from 'vue'
 import Vuex from 'vuex'
-// import createLogger from 'vuex/dist/logger'
 Vue.use(Vuex)
 Vue.config.debug = false
 // const debug = process.env.NODE_ENV !== 'production'
 const debug = false
 
 export default new Vuex.Store({
-  modules: {    
-  },
+  modules: {},
   state: {
-    stlfile: '',
+    userUploadFile: null,
+    stlUploadModel: {
+      name : '',
+      url: '',      
+      mesh : null,      
+      autoRotate : true,
+      size : '',
+      loading : true,
+      loadComplete: false,
+      progressLoadValue : 0,
+      meshProperty : {
+        color_code:'0xfeece1',
+        visible : true
+      },
+    },
     stlDemoModel: {
       name : 'Dragon',
       url: 'static/models/stl/Dragon.STL',
       mesh : null,      
-      auto_rotate : true,
+      autoRotate : true,
       size : '',
       loading : true,
-      load_complete: false,
-      progress_load_value : 0,
-      mesh_property : {
+      loadComplete: false,
+      progressLoadValue : 0,
+      meshProperty : {
         color_code:'0xfeece1',
         visible : true
-      },
-      
-    }
+      },            
+    },  
+    autoRotateModels: false,    
   },
   mutations: {
-    SET_STL_FILE(state,payload){      
-      state.stlfile = payload.stlfile
-    },        
-    SET_STL_DEMO_MODEL_LOAD_COMPLETE(state){      
-      state.stlDemoModel.load_complete = true
+    SET_USER_UPLOADED_FILE(state, payload){      
+      state.userUploadFile = payload.userUploadFile
+      console.log(state.userUploadFile)
+    },
+    SET_STL_UPLOADED_MODEL(state, payload){      
+      state.stlUploadModel = payload.stlUploadModel
+    },       
+    SET_STL_UPLOADED_MODEL_PROPERTY(state,payload){            
+      state.stlUploadModel.meshProperty = payload.meshProperty      
+    },
+    SET_STL_DEMO_MODEL_PROPERTY(state,payload){            
+      state.stlDemoModel.meshProperty = payload.meshProperty      
+    },
+    SET_PROGRESS_DEMO_MODEL_COMPLETE(state){      
+      state.stlDemoModel.loadComplete = true
       state.stlDemoModel.loading = false      
     },        
-    SET_STL_DEMO_MODEL_LOAD_PROGRESS(state,payload){      
-      state.stlDemoModel.progress_load_value = payload.progress_load_value
-      console.log('progress_load_value : ' +  state.stlDemoModel.progress_load_value)
-    },       
-    SET_STL_DEMO_MODEL_PROPERTY(state,payload){            
-      state.stlDemoModel.mesh_property = payload.mesh_property
-      console.log('[mutations SET_STL_DEMO_MODEL_PROPERTY] state.stlDemoModel.mesh_property');
-    }
+    SET_PROGRESS_DEMO_MODEL(state,payload){      
+      state.stlDemoModel.progressLoadValue = payload.progressLoadValue      
+    },
+    SET_AUTO_ROTATE_MODEL(state,payload){      
+      state.autoRotateModels = payload      
+    },           
   },
   getters: {    
-    getStlFile(state){
-      return state.stlfile
+    getUserUploadFile(state){
+      return state.userUploadFile
+    },
+    getstlUploadModel(state){
+      return state.stlUploadModel
     },
     getStlDemoModel(state){
       return state.stlDemoModel
+    },
+    getAutoRotateModels(state){
+      return state.autoRotateModels
     }
-
+  },  
+  actions: {
+    setAutoRotateModels: ({commit, state}, newValue) => {
+      console.log('setAutoRotateModels....: ' + newValue)
+      commit('SET_AUTO_ROTATE_MODEL', newValue)
+      return state.autoRotateModels
+    },
   },
   strict: debug
-  // plugins: debug ? [createLogger()] : []
 })

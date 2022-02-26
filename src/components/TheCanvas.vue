@@ -9,15 +9,9 @@ import * as THREE from 'three'
 export default {
   components: {  },   
   data () {
-    return {      
-      progress_All : {
-        value : 0, 
-        loading : true,
-        size : window.innerWidth/4
-      },        
-      chk_auto_rotate : true,
-      mesh_demo : null,  
-      // mesh_demo_color:'0xfeece1',             
+    return {                
+      meshDemo : null,   
+      meshUploaded :null,           
       pivot: null,                          
       CANVAS_WIDTH: 0,
       CANVAS_HEIGHT: 0,
@@ -28,21 +22,37 @@ export default {
     }
   },
   methods: {      
-      addStlFile: function(fileList){        
+      addUserStlModel: function(fileList){                
         var reader = new FileReader()
         var _this = this
-        reader.onload = function (e) {          
+        reader.onload = function (e) {
           var STLLoader = require('three-stl-loader')(THREE)
           var loader = new STLLoader()
           var geometry = loader.parse(e.target.result)          
           var material = new THREE.MeshLambertMaterial()
-          var mesh = new THREE.Mesh( geometry, material )          
-          _this.scene.add(mesh)
+          _this.meshUploaded = new THREE.Mesh( geometry, material )   
+          
+          var stlUploadModel = {
+            name : 'Dragon',
+            url: '',      
+            mesh : _this.meshUploaded,      
+            autoRotate : true,
+            size : '',
+            loading : false,
+            loadComplete: true,
+            progressLoadValue : 100,
+            meshProperty : {
+              color_code:'0xfeece1',
+              visible : true
+            }
+          }
+          _this.$store.commit('SET_STL_UPLOADED_MODEL',{stlUploadModel:stlUploadModel}) 
+
+          _this.scene.add(_this.meshUploaded)
         }
         reader.readAsArrayBuffer(fileList[0])
       },
-      initScene: function() {            
-        console.log('initScene...')
+      initScene: function() {                    
         this.container = document.getElementById("scene3d")
         let padding = 24       
         this.CANVAS_WIDTH = this.container.clientWidth
@@ -53,13 +63,13 @@ export default {
         this.scene.background = new THREE.Color(0x5E5EBB)                
 
         //Set Mesh To Center
-        var box = new THREE.Box3().setFromObject( this.mesh_demo );
-        box.center(  this.mesh_demo.position ); // this re-sets the mesh position
-        this.mesh_demo.position.multiplyScalar( - 1 );       
+        var box = new THREE.Box3().setFromObject( this.meshDemo );
+        box.center(  this.meshDemo.position ); // this re-sets the mesh position
+        this.meshDemo.position.multiplyScalar( - 1 );       
 
         //Grouping Mesh
         var obj3DCombine = new THREE.Object3D();
-        obj3DCombine.add( this.mesh_demo );
+        obj3DCombine.add( this.meshDemo );
         
         //Add Group to pivot for rotation aroud themself
         this.pivot = new THREE.Group();
@@ -89,7 +99,7 @@ export default {
         this.controls.update()
         window.addEventListener('resize', this.onWindowResize, false)           
     },
-    loadingModel: function(){
+    loadingDemoModel: function(){
       var _this = this
       var manager = new THREE.LoadingManager()
       manager.onStart = function ( ) {}
@@ -106,25 +116,23 @@ export default {
       
       var STLLoader = require('three-stl-loader')(THREE)
       var loaderDemo = new STLLoader(manager)
+      console.log('autoRotateModels : ' + this.$store.state.autoRotateModels)
       loaderDemo.load(this.$store.state.stlDemoModel.url, function (geometry) { 
         console.log('loaderDemo complete!')            
         var material = new THREE.MeshLambertMaterial()
         material.color.setHex( 0xfeece1 )
 
-        _this.mesh_demo = new THREE.Mesh(geometry, material)        
-        _this.$store.commit('SET_STL_DEMO_MODEL_LOAD_COMPLETE')           
-        _this.mesh_demo.scale.set(1, 1, 1)  
+        _this.meshDemo = new THREE.Mesh(geometry, material)        
+        _this.$store.commit('SET_PROGRESS_DEMO_MODEL_COMPLETE')           
+        _this.meshDemo.scale.set(1, 1, 1)  
 
-      }, this.loadingWacther_R)
+      }, this.loadingWacther)
       
     },      
-    loadingWacther_R: function (xhr){            
-      var progress_load_value = Math.round(xhr.loaded / xhr.total * 100)
-      this.$store.commit('SET_STL_DEMO_MODEL_LOAD_PROGRESS', {progress_load_value : progress_load_value})     
-    },    
-    loadingError: function ( ){      
-        window.alert("Load model error!, Please refresh this page!")        
-    },
+    loadingWacther: function (xhr){            
+      var progressLoadValue = Math.round(xhr.loaded / xhr.total * 100)
+      this.$store.commit('SET_PROGRESS_DEMO_MODEL', {progressLoadValue : progressLoadValue})     
+    },        
     onWindowResize: function () {        
       let padding = 24
       this.CANVAS_WIDTH = this.container.clientWidth
@@ -136,49 +144,53 @@ export default {
     animate: function() {
       requestAnimationFrame(this.animate)                
       this.controls.update()   
-      this.render()
-      // console.log(this.camera.position.x + ', '+ this.camera.position.y + ', ' + this.camera.position.z)      
+      this.render()     
     },
-    render: function () {           
-      if(this.mesh_demo != null){
-        var stlDemoModel = this.$store.state.stlDemoModel        
-        if(stlDemoModel.auto_rotate) this.pivot.rotation.z += 0.02;
+    render () {                       
+      if(this.pivot != null){                
+        if(this.$store.state.autoRotateModels) this.pivot.rotation.z += 0.02;
       }       
-      this.directionalLight.position.copy( this.camera.position ) //JUST what light follow camera
-      // this.camera.lookAt(this.cameraTarget)
+      this.directionalLight.position.copy( this.camera.position ) //Light follow camera      
       this.renderer.render(this.scene, this.camera)
     },
-    setupMeshProperty (mesh_property){        
-      this.mesh_demo.material.visible = mesh_property.visible
-      this.mesh_demo.material.color.setHex(mesh_property.color_code)            
+    setupDemoModelMeshProperty (mesh_property){        
+      this.meshDemo.material.visible = mesh_property.visible
+      this.meshDemo.material.color.setHex(mesh_property.color_code)            
+    },
+    setupUploadModelMeshProperty (mesh_property){        
+      this.meshUploaded.material.visible = mesh_property.visible
+      this.meshUploaded.material.color.setHex(mesh_property.color_code)            
     }
   },
   computed: {
-    stlfile () {
-      console.log('compute me...[stlfile]')
-      return this.$store.state.stlfile
+    userUploadFile () {      
+      return this.$store.getters.getUserUploadFile
     },
     stlDemoModel () {
-      return this.$store.state.stlDemoModel
+      return this.$store.getters.getStlDemoModel
     },     
-    mesh_demo_property (){
-      console.log('[computed] mesh_demo_mesh_property')
-      return this.$store.state.stlDemoModel.mesh_property
-    }
+    stlDemoModelMeshProperty (){      
+      return this.$store.state.stlDemoModel.meshProperty
+    },
+    stlUploadModelMeshProperty (){      
+      return this.$store.state.stlUploadModel.meshProperty
+    },
   },
   watch: {
-    stlfile(val){      
+    userUploadFile(val){      
       if(val){
-        this.addStlFile(val)
+        this.addUserStlModel(val)
       }      
     },
-    mesh_demo_property(newVal,oldVal){
-      console.log('[watch] mesh_demo_mesh_property : ' + oldVal + ',' + newVal)
-      this.setupMeshProperty(newVal)
+    stlDemoModelMeshProperty(val){      
+      this.setupDemoModelMeshProperty(val)
     },
+    stlUploadModelMeshProperty(val){    
+      this.setupUploadModelMeshProperty(val)
+    }
   },
   mounted() {  
-    this.loadingModel()    
+    this.loadingDemoModel()    
   }
 }
 

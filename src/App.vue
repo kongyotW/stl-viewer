@@ -1,23 +1,12 @@
 <template>
   <div id="app">    
-    <FileUploader/>
-    
-
+    <FileUploader/>    
     <v-container id="main">
         <v-layout row wrap>
-          <v-flex xs12 sm12 md2 lg2 align-center>
-            <v-checkbox :label="`Auto Rotate`" v-model="chk_auto_rotate" v-if="1"></v-checkbox>                         
-            <ModelSetup data-app/>
-            <!-- <v-divider/>
-            <ModelSetup data-app/> -->
+          <v-flex xs12 sm12 md2 lg2 align-center>                                     
+            <ModelSetup data-app/>            
           </v-flex>
-          <v-flex xs12 sm12 md10 lg10 align-center>
-            <!-- <div class="text-xs-center" v-if="progress_All.loading">              
-              <v-progress-circular :rotate="360" :size="progress_All.size" :width="15" 
-              :value="progress_All.value" color="teal">
-                loading models: {{ progress_All.value }}%
-              </v-progress-circular>
-            </div> -->
+          <v-flex xs12 sm12 md10 lg10 align-center>            
             <TheCanvas/>
          </v-flex>         
         </v-layout>

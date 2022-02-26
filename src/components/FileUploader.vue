@@ -4,7 +4,7 @@
       <div @drop="dragFile" style="background-color:green;margin-bottom:10px;padding:10px;">
         Or drag the file here
         <div v-if="File.length">
-          <ul v-for="file in File" :key="file">
+          <ul v-for="file in File" :key="file.name">
             <li>{{file.name}}</li>
           </ul>
         </div>
@@ -22,13 +22,11 @@ export default {
   methods: {
       uploadFile(e) {
         this.File = e.target.files;
-        console.log('uploadFile...')
-        console.log(this.File)
-        this.$store.commit('SET_STL_FILE', { stlfile: this.File })
+        this.$store.commit('SET_USER_UPLOADED_FILE', { userUploadFile: this.File })
       },
       dragFile(e) {
         this.File = e.dataTransfer.files
-        console.log('dragFile...')
+        this.$store.commit('SET_USER_UPLOADED_FILE', { userUploadFile: this.File })
       }
   },
 };
