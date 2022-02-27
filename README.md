@@ -1,24 +1,8 @@
-# stl-viewer
+# STL Viewer
+It is a simple STL Viewer which uses Vue.js
 
-## Project setup
 ```
-npm install
-```
-
-### Compiles and hot-reloads for development
-```
-npm run serve
-```
-
-### Compiles and minifies for production
-```
-npm run build
-```
-
-### Lints and fixes files
-```
-npm run lint
-```
-
-### Customize configuration
-See [Configuration Reference](https://cli.vuejs.org/config/).
+## Feature
+1. View demo STL
+2. Upload STL
+3. Setup STL Property

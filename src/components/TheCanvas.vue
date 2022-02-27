@@ -47,7 +47,6 @@ export default {
             }
           }
           _this.$store.commit('SET_STL_UPLOADED_MODEL',{stlUploadModel:stlUploadModel}) 
-
           _this.scene.add(_this.meshUploaded)
         }
         reader.readAsArrayBuffer(fileList[0])
@@ -63,32 +62,32 @@ export default {
         this.scene.background = new THREE.Color(0x5E5EBB)                
 
         //Set Mesh To Center
-        var box = new THREE.Box3().setFromObject( this.meshDemo );
-        box.center(  this.meshDemo.position ); // this re-sets the mesh position
-        this.meshDemo.position.multiplyScalar( - 1 );       
+        var box = new THREE.Box3().setFromObject( this.meshDemo )
+        box.center(  this.meshDemo.position ) // this re-sets the mesh position
+        this.meshDemo.position.multiplyScalar( - 1 )       
 
         //Grouping Mesh
-        var obj3DCombine = new THREE.Object3D();
-        obj3DCombine.add( this.meshDemo );
+        var obj3DCombine = new THREE.Object3D()
+        obj3DCombine.add( this.meshDemo )
         
         //Add Group to pivot for rotation aroud themself
-        this.pivot = new THREE.Group();
-        this.scene.add( this.pivot  );
-        this.pivot.add( obj3DCombine);
+        this.pivot = new THREE.Group()
+        this.scene.add(this.pivot)
+        this.pivot.add(obj3DCombine)
 
         // Lights
         // White directional light at half intensity shining from the top.
-        this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 );
-        this.scene.add( this.directionalLight );
+        this.directionalLight = new THREE.DirectionalLight( 0xffffff, 0.8 )
+        this.scene.add( this.directionalLight)
     
         // renderer
         var canvas = document.getElementById("canvas3d")
         this.renderer = new THREE.WebGLRenderer({ canvas: canvas })
         this.renderer.setPixelRatio(window.devicePixelRatio)    
-        this.renderer.setSize(this.CANVAS_WIDTH, this.CANVAS_HEIGHT);           
-        this.renderer.gammaInput = true;
-        this.renderer.gammaOutput = true;
-        this.renderer.shadowMap.enabled = true;
+        this.renderer.setSize(this.CANVAS_WIDTH, this.CANVAS_HEIGHT)          
+        this.renderer.gammaInput = true
+        this.renderer.gammaOutput = true
+        this.renderer.shadowMap.enabled = true
 
         var OrbitControls = require('three-orbit-controls')(THREE)        
         this.controls = new OrbitControls( this.camera, canvas )        
@@ -104,7 +103,7 @@ export default {
       var manager = new THREE.LoadingManager()
       manager.onStart = function ( ) {}
       manager.onLoad = function ( ) {       
-        _this.initScene();
+        _this.initScene()
         _this.animate()
       }
       manager.onProgress = function ( url, itemsLoaded, itemsTotal ) {
@@ -116,9 +115,7 @@ export default {
       
       var STLLoader = require('three-stl-loader')(THREE)
       var loaderDemo = new STLLoader(manager)
-      console.log('autoRotateModels : ' + this.$store.state.autoRotateModels)
-      loaderDemo.load(this.$store.state.stlDemoModel.url, function (geometry) { 
-        console.log('loaderDemo complete!')            
+      loaderDemo.load(this.$store.state.stlDemoModel.url, function (geometry) {           
         var material = new THREE.MeshLambertMaterial()
         material.color.setHex( 0xfeece1 )
 
@@ -138,7 +135,7 @@ export default {
       this.CANVAS_WIDTH = this.container.clientWidth
       this.CANVAS_HEIGHT = window.innerHeight - (padding*2)
       this.camera.aspect = this.CANVAS_WIDTH / this.CANVAS_HEIGHT
-      this.camera.updateProjectionMatrix();
+      this.camera.updateProjectionMatrix()
       this.renderer.setSize(this.CANVAS_WIDTH, this.CANVAS_HEIGHT)
     },
     animate: function() {
@@ -148,7 +145,7 @@ export default {
     },
     render () {                       
       if(this.pivot != null){                
-        if(this.$store.state.autoRotateModels) this.pivot.rotation.z += 0.02;
+        if(this.$store.state.autoRotateModels) this.pivot.rotation.z += 0.02
       }       
       this.directionalLight.position.copy( this.camera.position ) //Light follow camera      
       this.renderer.render(this.scene, this.camera)

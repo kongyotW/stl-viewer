@@ -2,7 +2,6 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 Vue.use(Vuex)
 Vue.config.debug = false
-// const debug = process.env.NODE_ENV !== 'production'
 const debug = false
 
 export default new Vuex.Store({
@@ -79,8 +78,7 @@ export default new Vuex.Store({
     }
   },  
   actions: {
-    setAutoRotateModels: ({commit, state}, newValue) => {
-      console.log('setAutoRotateModels....: ' + newValue)
+    setAutoRotateModels: ({commit, state}, newValue) => {      
       commit('SET_AUTO_ROTATE_MODEL', newValue)
       return state.autoRotateModels
     },
